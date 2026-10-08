@@ -1,0 +1,8 @@
+services:
+  llm-learning-path:
+    build: .
+    image: llm-learning-path:latest
+    container_name: llm-learning-path
+    ports:
+      - "80:80"
+    restart: unless-stopped
