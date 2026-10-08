@@ -1,8 +1,30 @@
 services:
-  llm-learning-path:
+  # 站点本体：Node 多阶段构建产物，仅在内部网络提供 80 端口
+  web:
     build: .
     image: llm-learning-path:latest
-    container_name: llm-learning-path
+    container_name: llm-learning-path-web
+    expose:
+      - "80"
+    restart: unless-stopped
+
+  # 反向代理：对外提供 80 / 443，转发到 web 容器
+  caddy:
+    image: caddy:2-alpine
+    container_name: llm-learning-path-caddy
+    depends_on:
+      - web
     ports:
       - "80:80"
+      - "443:443"
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
     restart: unless-stopped
+
+volumes:
+  caddy_data:
+  caddy_config:

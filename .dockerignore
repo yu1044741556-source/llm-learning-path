@@ -6,4 +6,5 @@ dist
 *.log
 Dockerfile
 docker-compose.yml
+Caddyfile
 README.md
